@@ -6,15 +6,18 @@ class ColorLatexAligns(object):
 
     colormap = dict()
 
-    def readInput(self, path):
+    def read_fasta_input(self, path):
         f = open(path, 'r')
-        return f.readlines()
+        lines = f.readlines()
+        f.close()
+        return lines
 
-    def readColorMap(self, path):
+    def read_color_map(self, path):
         f = open(path, 'r')
         for line in f.readlines():
             (letter, rgbtext) = line.split(' ')
             rgb = rgbtext.strip().lstrip('{').rstrip('}').split(',')
             self.colormap[letter] = rgb
+        f.close()
         return self.colormap
 
