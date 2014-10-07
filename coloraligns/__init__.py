@@ -1,0 +1,1 @@
+from coloraligns import ColorLatexAlign
