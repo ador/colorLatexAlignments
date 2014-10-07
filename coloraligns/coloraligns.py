@@ -1,3 +1,5 @@
+from fastareader import FastaReader
+
 class ColorLatexAligns(object):
     """A class that reads an input multiple
     sequence alignment (fasta format) and
@@ -5,12 +7,12 @@ class ColorLatexAligns(object):
     colors the alignment"""
 
     colormap = dict()
+    reader = FastaReader()
+
 
     def read_fasta_input(self, path):
-        f = open(path, 'r')
-        lines = f.readlines()
-        f.close()
-        return lines
+        sequences = self.reader.read_seqs(path)
+        return sequences
 
     def read_color_map(self, path):
         f = open(path, 'r')
