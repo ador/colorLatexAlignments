@@ -38,11 +38,11 @@ class FastaReader(object):
                 header = line[1:-1].strip() # eat '>' and '\n' ans extra whitespace
                 first = False
             else:
-                seq_items.append(line.strip())
+                seq_items.append(line.strip().upper())
         if len(seq_items) > 0:
             seq = "".join(seq_items)
             if not self.check_seen_seqname(results, header):
-                results.append(Sequence(header,seq))
+                results.append(Sequence(header, seq))
             else:
                 infile.close()
                 raise DuplicateSeqNameException(header)
