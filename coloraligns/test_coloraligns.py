@@ -9,8 +9,8 @@ class TestColorLatexAligns(unittest.TestCase):
         self.colorAligns = ColorLatexAligns()
 
     def test_read_inputs(self):
-        alignLines = self.colorAligns.read_fasta_input(self.inputAlignPath1)
-        self.assertEqual(alignLines[0].strip(), ">alma")
+        seqs = self.colorAligns.read_fasta_input(self.inputAlignPath1)
+        self.assertEqual(seqs[0].get_name(), "alma")
         colorMap = self.colorAligns.read_color_map(self.colorDefsPath)
         self.assertEqual(colorMap['A'], ['148','194','53'])
         self.assertEqual(colorMap['Z'], ['245','250','119'])

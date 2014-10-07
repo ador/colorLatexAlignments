@@ -13,15 +13,40 @@ class DuplicateSeqNameException(Exception):
 
 class FastaReader(object):
 
-    def read_seqs(self, path):
-        if not os.path.exists(path):
-            raise FastaNotFound(fasta_name)
-        f = open(path, 'r')
-        lines = f.readlines()
-        f.close()
-        return lines
-        
+    # returns False if its a new seqence name, True if not new
+    def check_seen_seqname(self, seq_list, seqname):
+        for seq in seq_list:
+            if seq.get_name() == seqname:
+                return True
+        return False
 
-    
-            #if header in seen_headers:
-            #            raise DuplicateSeqNameException(header)
+    def read_seqs(self, path):
+        infile = open(path, 'r')
+        inlines = infile.readlines()
+        results = []
+        header = ''
+        seq_items = []
+        first = True
+        for line in inlines:
+            if line[0] == ';':
+                continue # comment
+            elif line[0] == '>':
+                if not first:
+                    seq = "".join(seq_items)
+                    results.append(Sequence(header,seq))
+                    seq_items = []
+                header = line[1:-1].strip() # eat '>' and '\n' ans extra whitespace
+                first = False
+            else:
+                seq_items.append(line.strip())
+        if len(seq_items) > 0:
+            seq = "".join(seq_items)
+            if not self.check_seen_seqname(results, header):
+                results.append(Sequence(header,seq))
+            else:
+                infile.close()
+                raise DuplicateSeqNameException(header)
+        print ("results:" + str(len(results)))
+        infile.close()
+        return results
+
