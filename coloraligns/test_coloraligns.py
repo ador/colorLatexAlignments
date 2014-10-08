@@ -14,8 +14,16 @@ class TestColorLatexAligns(unittest.TestCase):
         colorMap = self.colorAligns.read_color_map(self.colorDefsPath)
         self.assertEqual(colorMap['A'], ['148','194','53'])
         self.assertEqual(colorMap['Z'], ['245','250','119'])
-        # should raise an exception for an unreadable file
-        # TODO self.assertRaises(IOError, )
+
+    def test_read_bad_colorfile(self):
+        self.assertRaises(FileNotFoundError, self.colorAligns.read_color_map, "notexisting.txt")
+
+    def test_create_latex(self):
+        self.colorAligns.read_fasta_input(self.inputAlignPath1)
+        self.colorAligns.read_color_map(self.colorDefsPath)
+        latex_lines = self.colorAligns.create_latex_code(10)
+        self.assertEqual(len(latex_lines), 3)
+        self.assertEqual("E-WQFYIGGVF-\n", latex_lines[0])
 
 if __name__ == '__main__':
     unittest.main()
