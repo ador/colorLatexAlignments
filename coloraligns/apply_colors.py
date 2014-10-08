@@ -1,5 +1,5 @@
 import argparse
-from coloraligns import coloraligns
+from coloraligns import ColorLatexAligns
 
 
 parser = argparse.ArgumentParser()
@@ -14,5 +14,5 @@ colorAligns = ColorLatexAligns()
 colorAligns.read_fasta_input(args.i)
 colorAligns.read_color_map(args.c)
 colorAligns.create_latex_code(args.l)
-colorAligns.write_output(arcg.o)
+colorAligns.write_output(args.o)
 

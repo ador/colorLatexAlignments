@@ -21,31 +21,31 @@ class FastaReader(object):
         return False
 
     def read_seqs(self, path):
-        infile = open(path, 'r')
-        inlines = infile.readlines()
         results = []
-        header = ''
-        seq_items = []
-        first = True
-        for line in inlines:
-            if line[0] == ';':
-                continue # comment
-            elif line[0] == '>':
-                if not first:
-                    seq = "".join(seq_items)
+        with open(path, 'r') as infile:
+            inlines = infile.readlines()
+            header = ''
+            seq_items = []
+            first = True
+            for line in inlines:
+                if line[0] == ';':
+                    continue # comment
+                elif line[0] == '>':
+                    if not first:
+                        seq = "".join(seq_items)
+                        results.append(Sequence(header, seq))
+                        seq_items = []
+                    header = line[1:-1].strip() # eat '>' and '\n' ans extra whitespace
+                    first = False
+                else:
+                    seq_items.append(line.strip().upper())
+            if len(seq_items) > 0:
+                seq = "".join(seq_items)
+                if not self.check_seen_seqname(results, header):
                     results.append(Sequence(header, seq))
-                    seq_items = []
-                header = line[1:-1].strip() # eat '>' and '\n' ans extra whitespace
-                first = False
-            else:
-                seq_items.append(line.strip().upper())
-        if len(seq_items) > 0:
-            seq = "".join(seq_items)
-            if not self.check_seen_seqname(results, header):
-                results.append(Sequence(header, seq))
-            else:
-                infile.close()
-                raise DuplicateSeqNameException(header)
-        infile.close()
+                else:
+                    infile.close()
+                    raise DuplicateSeqNameException(header)
+            infile.close()
         return results
 

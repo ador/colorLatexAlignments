@@ -18,21 +18,20 @@ class ColorLatexAligns(object):
 
 
     def read_color_map(self, path):
-        f = open(path, 'r')
-        for line in f.readlines():
-            (letter, rgbtext) = line.split(' ')
-            rgb = rgbtext.strip().lstrip('{').rstrip('}').split(',')
-            self.colormap[letter] = rgb
-        f.close()
+        with open(path, 'r') as f:
+            for line in f.readlines():
+                (letter, rgbtext) = line.split(' ')
+                rgb = rgbtext.strip().lstrip('{').rstrip('}').split(',')
+                self.colormap[letter] = rgb
+            f.close()
         return self.colormap
 
 
     def create_latex_code(self, width):
-
         for seqobj in self.sequences:
             self.outlines.append(seqobj.seq + "\n")
         return self.outlines
 
 
-    def write_output(self):
+    def write_output(self, outpath):
         pass
