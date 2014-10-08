@@ -6,11 +6,11 @@ class ColorLatexAligns(object):
     prints out a latex code chunk that
     colors the alignment"""
 
-    colormap = dict()
-    reader = FastaReader()
-    outlines = list()
-    sequences = []
-
+    def __init__(self):
+        self.colormap = dict()
+        self.reader = FastaReader()
+        self.outlines = list()
+        self.sequences = []
 
     def read_fasta_input(self, path):
         self.sequences = self.reader.read_seqs(path)
@@ -29,8 +29,8 @@ class ColorLatexAligns(object):
 
     def create_latex_code(self, width):
 
-        for seq in self.sequences:
-            self.outlines.append(seq.get_seq() + "\n")
+        for seqobj in self.sequences:
+            self.outlines.append(seqobj.seq + "\n")
         return self.outlines
 
 

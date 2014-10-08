@@ -16,7 +16,7 @@ class FastaReader(object):
     # returns False if its a new seqence name, True if not new
     def check_seen_seqname(self, seq_list, seqname):
         for seq in seq_list:
-            if seq.get_name() == seqname:
+            if seq.name == seqname:
                 return True
         return False
 
@@ -33,7 +33,7 @@ class FastaReader(object):
             elif line[0] == '>':
                 if not first:
                     seq = "".join(seq_items)
-                    results.append(Sequence(header,seq))
+                    results.append(Sequence(header, seq))
                     seq_items = []
                 header = line[1:-1].strip() # eat '>' and '\n' ans extra whitespace
                 first = False
@@ -46,7 +46,6 @@ class FastaReader(object):
             else:
                 infile.close()
                 raise DuplicateSeqNameException(header)
-        print ("results:" + str(len(results)))
         infile.close()
         return results
 

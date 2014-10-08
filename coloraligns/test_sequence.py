@@ -9,15 +9,15 @@ class TestSequence(unittest.TestCase):
 
     def test_get_name(self):
         seq1 = Sequence("seqName", ["AAAACCC"])
-        self.assertEqual(seq1.get_name(), "seqName")
+        self.assertEqual(seq1.name, "seqName")
 
     def test_get_seq1(self):
         seq1 = Sequence("seqName", ["AAAACCC"])
-        self.assertEqual(seq1.get_seq(), "AAAACCC")
+        self.assertEqual(seq1.seq, "AAAACCC")
 
     def test_get_seq2(self):
         seq2 = Sequence("seqName2", ["AAAACCC", "DDEEEAA", "LLVAS"])
-        self.assertEqual(seq2.get_seq(), "AAAACCCDDEEEAALLVAS")
+        self.assertEqual(seq2.seq, "AAAACCCDDEEEAALLVAS")
 
     def test_wrap(self):
         seq2 = Sequence("seqName2", ["AAAACCC", "DDEEEAA", "LLVAS"])

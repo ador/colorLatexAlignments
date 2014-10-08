@@ -1,5 +1,5 @@
 import argparse
-from coloraligns import ColorLatexAligns
+from coloraligns import coloraligns
 
 
 parser = argparse.ArgumentParser()
