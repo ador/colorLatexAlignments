@@ -48,19 +48,26 @@ class ColorLatexAligns(object):
         rows_per_seq = self.howmany_rows_per_seq(seqwidth)
         return (seq_num + 2) * (rows_per_seq)
 
-    def create_latex_code(self, seqwidth, namewidth, nocolor=False):
+    def create_latex_code(self, seq_width, name_width, nocolor=False):
         if len(self.sequences) < 1:
             return list()
         # precomputing row number because we have to interleave results
-        num_rows_to_return = self.howmany_rows_total(seqwidth)
+        rows_per_seq = self.howmany_rows_per_seq(seq_width)
+        num_rows_to_return = self.howmany_rows_total(seq_width)
         self.outlines = [None] * num_rows_to_return
+        num_of_seqs = len(self.sequences)
 
-        for seqobj in self.sequences:
-            if nocolor:
-                self.outlines.append(self.fixwidth(seqobj.name, namewidth)
-                                     + seqobj.seq + "\n")
-            else:
-                self.outlines.append()
+        for i in range(rows_per_seq):
+            self.outlines[(i * (num_of_seqs + 2))] = "   todo * *:. *"
+            self.outlines[(i * (num_of_seqs + 2) + num_of_seqs + 1)] = "- - - - - -"
+
+        for seq_idx, seq_obj in enumerate(self.sequences):
+            #if nocolor: # TODO
+            seq_rows = seq_obj.wrap_seq(seq_width)
+            for row_idx, seq_row in enumerate(seq_rows):
+                out_idx = self.outrow_indexer(seq_idx, row_idx)
+                self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + seq_rows[row_idx]
+            #else: # TODO
         return self.outlines
 
 

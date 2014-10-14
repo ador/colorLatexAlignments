@@ -3,6 +3,12 @@ from coloraligns import ColorLatexAligns
 
 class TestColorLatexAligns(unittest.TestCase):
 
+    def print_lines(self, lines):
+        print("------start--------")
+        for line in lines:
+            print(line)
+        print("------END--------")
+
     def setUp(self):
         self.inputAlignPath1 = "testdata/sample_align_short3.fsa"
         self.colorDefsPath = "testdata/sample_colordef.txt"
@@ -27,15 +33,26 @@ class TestColorLatexAligns(unittest.TestCase):
         computed4 = self.colorAligns.howmany_rows_total(4)
         self.assertEqual(computed4, 15)
 
+    def test_indexer1(self):
+        self.colorAligns.read_fasta_input(self.inputAlignPath1)
+        latex_lines = self.colorAligns.create_latex_code(20, 8, True)
+        self.assertEqual(len(latex_lines), 5)
+        #self.print_lines(latex_lines)
+
+    def test_indexer2(self):
+        self.colorAligns.read_fasta_input(self.inputAlignPath1)
+        latex_lines = self.colorAligns.create_latex_code(8, 8, True)
+        self.assertEqual(len(latex_lines), 10)
+        #self.print_lines(latex_lines)
 
     def test_create_latex1(self):
         self.colorAligns.read_fasta_input(self.inputAlignPath1)
         self.colorAligns.read_color_map(self.colorDefsPath)
-        latex_lines = self.colorAligns.create_latex_code(20, 8, True)
-        #self.assertEqual(len(latex_lines), 3)
-        #self.assertEqual("alma    E-WQFYIGGVF-\n", latex_lines[0])
-        #self.assertEqual("korte   -DWQ-YKSGV--\n", latex_lines[1])
-        #self.assertEqual("szilva  -D-QFYK-GIFE\n", latex_lines[2])
+        latex_lines = self.colorAligns.create_latex_code(25, 8, True)
+        self.assertEqual(len(latex_lines), 5)
+        self.assertEqual("alma    E-WQFYIGGVF-", latex_lines[1])
+        self.assertEqual("korte   -DWQ-YKSGV--", latex_lines[2])
+        self.assertEqual("szilva  -D-QFYK-GIFE", latex_lines[3])
 
 
 if __name__ == '__main__':
