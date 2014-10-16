@@ -1,11 +1,13 @@
 import math
 from fastareader import FastaReader
+from string import ascii_uppercase
 
 class ColorLatexAligns(object):
     """A class that reads an input multiple
     sequence alignment (fasta format) and
     prints out a latex code chunk that
-    colors the alignment"""
+    colors the alignment.
+    """
 
     def __init__(self):
         self.colormap = dict()
@@ -17,7 +19,6 @@ class ColorLatexAligns(object):
         self.sequences = self.reader.read_seqs(path)
         return self.sequences
 
-
     def read_color_map(self, path):
         with open(path, 'r') as f:
             for line in f.readlines():
@@ -26,6 +27,41 @@ class ColorLatexAligns(object):
                 self.colormap[letter] = rgb
             f.close()
         return self.colormap
+
+    def get_latex_colordef(self, char):
+        if self.colormap[char] != None:
+            (R, G, B) = self.colormap[char]
+            cdef = "\definecolor{{color{letter}}}{{RGB}}{{{r},{g},{b}}}".format(letter=char, r=R, g=G, b=B)
+            return cdef
+
+    def get_latex_colordefs_capitals(self):
+        ret = list()
+        for letter in ascii_uppercase:
+            latex_part = self.get_latex_colordef(letter)
+            ret.append(latex_part)
+        return ret
+
+    def get_latex_preamble(self):
+        ret = list()
+        ret.append(r'\usepackage{fancyvrb}')
+        ret.append(r'\usepackage[usenames, dvipsnames]{color}')
+        ret.append(r'\usepackage{color}')
+        ret.append(r'\usepackage{setspace}')
+        ret.extend(self.get_latex_colordefs_capitals())
+        return ret
+
+    def get_latex_pre_verbatim(self):
+        ret = list()
+        for letter in ascii_uppercase:
+            color_newcommand = r'\newcommand{\c' + letter + r'}[1]{\begingroup\fboxsep=1.5pt\colorbox{color' + letter + r'}{#1}\endgroup}'
+            ret.append(color_newcommand)
+        ret.append(r'\begin{Verbatim}[frame=single,baselinestretch=0.48,commandchars=\\\{\},codes={\catcode`$=3\catcode`^=7\catcode`_=8}]')
+        return ret
+
+    def get_latex_post_verbatim(self):
+        ret = list()
+        ret.append(r'\end{Verbatim}')
+        return ret
 
     def fixwidth(self, name, width):
         if len(name) > width:
@@ -47,6 +83,7 @@ class ColorLatexAligns(object):
         seq_num = len(self.sequences)
         rows_per_seq = self.howmany_rows_per_seq(seqwidth)
         return (seq_num + 2) * (rows_per_seq)
+
 
     def create_latex_code(self, seq_width, name_width, nocolor=False):
         if len(self.sequences) < 1:
