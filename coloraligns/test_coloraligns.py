@@ -97,8 +97,8 @@ class TestColorLatexAligns(unittest.TestCase):
         self.colorAligns.read_color_map(self.colorDefsPath)
         latex_lines = self.colorAligns.create_latex_code(6, 8, False)
         self.assertEqual(len(latex_lines), 10)
-        self.assertEqual("alma    E-WQFY", latex_lines[1])
-
+        self.assertEqual("alma    \cE{E}-\cW{W}\cQ{Q}\cF{F}\cY{Y}", latex_lines[1])
+        self.assertEqual("korte   -\cD{D}\cW{W}\cQ{Q}-\cY{Y}", latex_lines[2])
 
 if __name__ == '__main__':
     unittest.main()

@@ -84,6 +84,15 @@ class ColorLatexAligns(object):
         rows_per_seq = self.howmany_rows_per_seq(seqwidth)
         return (seq_num + 2) * (rows_per_seq)
 
+    def color_letters(self, seq_part):
+        ret = ""
+        for letter in seq_part:
+            if letter == '-':
+                ret = ret + '-'
+            else:
+                one_colored_letter = r'\c' + letter + r'{' + letter + r'}'
+                ret = ret + one_colored_letter
+        return ret
 
     def create_latex_code(self, seq_width, name_width, nocolor=False):
         if len(self.sequences) < 1:
@@ -99,12 +108,13 @@ class ColorLatexAligns(object):
             self.outlines[(i * (num_of_seqs + 2) + num_of_seqs + 1)] = "- - - - - -"
 
         for seq_idx, seq_obj in enumerate(self.sequences):
-            #if nocolor: # TODO
             seq_rows = seq_obj.wrap_seq(seq_width)
             for row_idx, seq_row in enumerate(seq_rows):
                 out_idx = self.outrow_indexer(seq_idx, row_idx)
-                self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + seq_rows[row_idx]
-            #else: # TODO
+                if nocolor:
+                    self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + seq_rows[row_idx]
+                else:
+                    self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + self.color_letters(seq_rows[row_idx])
         return self.outlines
 
 
