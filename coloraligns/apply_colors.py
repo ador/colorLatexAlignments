@@ -14,6 +14,6 @@ args = parser.parse_args()
 colorAligns = ColorLatexAligns()
 colorAligns.read_fasta_input(args.i)
 colorAligns.read_color_map(args.c)
-colorAligns.create_latex_code(args.l, args.n)
+colorAligns.create_latex_code(int(args.l), int(args.n))
 colorAligns.write_output(args.o)
 

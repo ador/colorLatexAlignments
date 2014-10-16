@@ -47,14 +47,21 @@ class ColorLatexAligns(object):
         ret.append(r'\usepackage[usenames, dvipsnames]{color}')
         ret.append(r'\usepackage{color}')
         ret.append(r'\usepackage{setspace}')
+        ret.append(r'\usepackage{adjustbox}')
         ret.extend(self.get_latex_colordefs_capitals())
+        ret.append('\n')
+        ret.append(r'\begin{document}')
+        ret.append('\n')
         return ret
+
+#\newcommand{\cDel}{\adjustbox{scale={1.576}{1}}{-}}
 
     def get_latex_pre_verbatim(self):
         ret = list()
         for letter in ascii_uppercase:
             color_newcommand = r'\newcommand{\c' + letter + r'}[1]{\begingroup\fboxsep=1.5pt\colorbox{color' + letter + r'}{#1}\endgroup}'
             ret.append(color_newcommand)
+        ret.append(r'\newcommand{\cDel}{\adjustbox{scale={1.576}{1}}{-}}')
         ret.append(r'\begin{Verbatim}[frame=single,baselinestretch=0.48,commandchars=\\\{\},codes={\catcode`$=3\catcode`^=7\catcode`_=8}]')
         return ret
 
@@ -88,7 +95,7 @@ class ColorLatexAligns(object):
         ret = ""
         for letter in seq_part:
             if letter == '-':
-                ret = ret + '-'
+                ret = ret + '\cDel'
             else:
                 one_colored_letter = r'\c' + letter + r'{' + letter + r'}'
                 ret = ret + one_colored_letter
@@ -119,4 +126,21 @@ class ColorLatexAligns(object):
 
 
     def write_output(self, outpath):
-        pass
+        with open(outpath, 'w') as f:
+            # preamble
+            for line in self.get_latex_preamble():
+                f.write(line + "\n")
+            f.write("\n")
+            # begin verbatim
+            for line in self.get_latex_pre_verbatim():
+                f.write(line + "\n")
+            f.write("\n")
+            # the alignmnet
+            for line in self.outlines:
+                f.write(line + "\n")
+            # end verbatim
+            for line in self.get_latex_post_verbatim():
+                f.write(line + "\n")
+            f.close()
+
+
