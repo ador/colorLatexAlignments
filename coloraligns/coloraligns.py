@@ -61,7 +61,7 @@ class ColorLatexAligns(object):
         for letter in ascii_uppercase:
             color_newcommand = r'\newcommand{\c' + letter + r'}[1]{\begingroup\fboxsep=1.5pt\colorbox{color' + letter + r'}{#1}\endgroup}'
             ret.append(color_newcommand)
-        ret.append(r'\newcommand{\cDel}{\adjustbox{scale={1.576}{1}}{-}}')
+        ret.append(r'\newcommand{\cDel}{\begingroup\fboxsep=1.5pt\colorbox{white}{-}\endgroup}')
         ret.append(r'\begin{Verbatim}[frame=single,baselinestretch=0.48,commandchars=\\\{\},codes={\catcode`$=3\catcode`^=7\catcode`_=8}]')
         return ret
 
