@@ -54,13 +54,15 @@ class ColorLatexAligns(object):
         ret.append('\n')
         return ret
 
-#\newcommand{\cDel}{\adjustbox{scale={1.576}{1}}{-}}
-
     def get_latex_pre_verbatim(self):
         ret = list()
         for letter in ascii_uppercase:
-            color_newcommand = r'\newcommand{\c' + letter + r'}[1]{\begingroup\fboxsep=1.5pt\colorbox{color' + letter + r'}{#1}\endgroup}'
-            ret.append(color_newcommand)
+            if letter == 'Q':
+                colorQ_newcommand = r'\newcommand{\cQ}[1]{\begingroup\raisebox{1.pt}{\adjustbox{scale={1}{0.867}}{\fboxsep=1.5pt\colorbox{colorQ}{#1}}}\endgroup}'
+                ret.append(colorQ_newcommand)
+            else:
+                color_newcommand = r'\newcommand{\c' + letter + r'}[1]{\begingroup\fboxsep=1.5pt\colorbox{color' + letter + r'}{#1}\endgroup}'
+                ret.append(color_newcommand)
         ret.append(r'\newcommand{\cDel}{\begingroup\fboxsep=1.5pt\colorbox{white}{-}\endgroup}')
         ret.append(r'\begin{Verbatim}[frame=single,baselinestretch=0.48,commandchars=\\\{\},codes={\catcode`$=3\catcode`^=7\catcode`_=8}]')
         return ret
