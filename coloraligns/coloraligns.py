@@ -103,7 +103,12 @@ class ColorLatexAligns(object):
                 ret = ret + one_colored_letter
         return ret
 
-    def create_latex_code(self, seq_width, name_width, nocolor=False):
+
+    def get_align_marks_line(self):
+        # TODO
+        return "* this feature is not implemented yet *"
+
+    def create_latex_code(self, seq_width, name_width, nocolor=False, withmarks=False):
         if len(self.sequences) < 1:
             return list()
         # precomputing row number because we have to interleave results
@@ -113,8 +118,11 @@ class ColorLatexAligns(object):
         num_of_seqs = len(self.sequences)
 
         for i in range(rows_per_seq):
-            self.outlines[(i * (num_of_seqs + 2))] = "   todo * *:. *"
-            self.outlines[(i * (num_of_seqs + 2) + num_of_seqs + 1)] = "- - - - - -"
+            marks_line = ""
+            if withmarks:
+                marks_line = self.get_align_marks_line()
+            self.outlines[(i * (num_of_seqs + 2))] = marks_line
+            self.outlines[(i * (num_of_seqs + 2) + num_of_seqs + 1)] = "" # empty row for separation
 
         for seq_idx, seq_obj in enumerate(self.sequences):
             seq_rows = seq_obj.wrap_seq(seq_width)

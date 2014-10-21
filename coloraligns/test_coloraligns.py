@@ -107,5 +107,13 @@ class TestColorLatexAligns(unittest.TestCase):
         self.assertEqual("alma    \cE{E}\cDel\cW{W}\cQ{Q}\cF{F}\cY{Y}", latex_lines[1])
         self.assertEqual("korte   \cDel\cD{D}\cW{W}\cQ{Q}\cDel\cY{Y}", latex_lines[2])
 
+    def test_marks_row_nomarks(self):
+        self.colorAligns.read_fasta_input(self.inputAlignPath1)
+        self.colorAligns.read_color_map(self.colorDefsPath)
+        latex_lines = self.colorAligns.create_latex_code(6, 8, False, False)
+        self.assertEqual(len(latex_lines), 10)
+        self.assertEqual("", latex_lines[0])
+        self.assertEqual("", latex_lines[5])
+
 if __name__ == '__main__':
     unittest.main()
