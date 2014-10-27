@@ -11,7 +11,9 @@ class TestColorLatexAligns(unittest.TestCase):
 
     def setUp(self):
         self.inputAlignPath1 = "testdata/sample_align_short3.fsa"
+        self.inputAlignPathDna = "testdata/sample_align_DNA.fsa"
         self.colorDefsPath = "testdata/sample_colordef.txt"
+        self.colorDefsPathDna = "testdata/sample_colordef_dna.txt"
         self.colorAligns = ColorLatexAligns()
 
     def test_read_inputs(self):
@@ -20,7 +22,7 @@ class TestColorLatexAligns(unittest.TestCase):
         colorMap = self.colorAligns.read_color_map(self.colorDefsPath)
         self.assertEqual(colorMap['A'], ['148','194','53'])
         self.assertEqual(colorMap['Z'], ['245','250','119'])
-        self.assertEqual(colorMap['-'], ['255','255','255'])
+        self.assertEqual(colorMap['Del'], ['255','255','255'])
 
     def test_read_bad_colorfile(self):
         self.assertRaises(FileNotFoundError, self.colorAligns.read_color_map, "notexisting.txt")
@@ -68,13 +70,13 @@ class TestColorLatexAligns(unittest.TestCase):
     def test_transform_color_row(self):
         colorMap = self.colorAligns.read_color_map(self.colorDefsPath)
         self.assertEqual(colorMap['A'], ['148','194','53'])
-        self.assertEqual(colorMap['-'], ['255','255','255'])
+        self.assertEqual(colorMap['Del'], ['255','255','255'])
         colordefA = self.colorAligns.get_latex_colordef('A')
         colordefZ = self.colorAligns.get_latex_colordef('Z')
         colordefDash = self.colorAligns.get_latex_colordef('-')
         self.assertEqual(colordefA, '\definecolor{colorA}{RGB}{148,194,53}')
         self.assertEqual(colordefZ, '\definecolor{colorZ}{RGB}{245,250,119}')
-        self.assertEqual(colordefDash, '\definecolor{color-}{RGB}{255,255,255}')
+        self.assertEqual(colordefDash, '\definecolor{colorDel}{RGB}{255,255,255}')
 
     def test_latex_preamble(self):
         colorMap = self.colorAligns.read_color_map(self.colorDefsPath)
@@ -86,13 +88,16 @@ class TestColorLatexAligns(unittest.TestCase):
         self.assertEqual(r'\usepackage{adjustbox}', preamble_rows[4])
         self.assertEqual(r'\definecolor{colorA}{RGB}{148,194,53}', preamble_rows[5])
         self.assertEqual(r'\definecolor{colorB}{RGB}{128,161,210}', preamble_rows[6])
-        self.assertEqual(r'\definecolor{colorZ}{RGB}{245,250,119}', preamble_rows[30])
+        self.assertEqual(r'\definecolor{colorZ}{RGB}{245,250,119}', preamble_rows[31])
 
     def test_latex_pre_verbatim(self):
+        colorMap = self.colorAligns.read_color_map(self.colorDefsPath)
         pre_rows = self.colorAligns.get_latex_pre_verbatim()
+        self.assertEqual(28, len(pre_rows))
         self.assertEqual(r'\newcommand{\cA}[1]{\begingroup\fboxsep=1.5pt\colorbox{colorA}{#1}\endgroup}', pre_rows[0])
         self.assertEqual(r'\newcommand{\cB}[1]{\begingroup\fboxsep=1.5pt\colorbox{colorB}{#1}\endgroup}', pre_rows[1])
-        self.assertEqual(r'\newcommand{\cZ}[1]{\begingroup\fboxsep=1.5pt\colorbox{colorZ}{#1}\endgroup}', pre_rows[25])
+        self.assertEqual(r'\newcommand{\cDel}[1]{\begingroup\fboxsep=1.5pt\colorbox{colorDel}{#1}\endgroup}', pre_rows[3])
+        self.assertEqual(r'\newcommand{\cZ}[1]{\begingroup\fboxsep=1.5pt\colorbox{colorZ}{#1}\endgroup}', pre_rows[26])
         self.assertEqual(r'\begin{Verbatim}[frame=single,baselinestretch=0.48,commandchars=\\\{\},codes={\catcode`$=3\catcode`^=7\catcode`_=8}]', pre_rows[27])
 
     def test_latex_post_verbatim(self):
@@ -104,8 +109,18 @@ class TestColorLatexAligns(unittest.TestCase):
         self.colorAligns.read_color_map(self.colorDefsPath)
         latex_lines = self.colorAligns.create_latex_code(6, 8, False)
         self.assertEqual(len(latex_lines), 10)
-        self.assertEqual("alma    \cE{E}\cDel\cW{W}\cQ{Q}\cF{F}\cY{Y}", latex_lines[1])
-        self.assertEqual("korte   \cDel\cD{D}\cW{W}\cQ{Q}\cDel\cY{Y}", latex_lines[2])
+        self.assertEqual("alma    \cE{E}\cDel{-}\cW{W}\cQ{Q}\cF{F}\cY{Y}", latex_lines[1])
+        self.assertEqual("korte   \cDel{-}\cD{D}\cW{W}\cQ{Q}\cDel{-}\cY{Y}", latex_lines[2])
+
+    def test_create_latex_color2(self):
+        self.colorAligns.read_fasta_input(self.inputAlignPathDna)
+        self.colorAligns.read_color_map(self.colorDefsPathDna)
+        latex_lines_dna = self.colorAligns.create_latex_code(6, 8, False, False, "dna")
+        self.assertEqual(len(latex_lines_dna), 10)
+        self.assertEqual(r'alma    \cCd{C}\cDel{-}\cTd{T}\cTd{T}\cAd{A}\cGd{G}' , latex_lines_dna[1])
+        latex_lines_prot = self.colorAligns.create_latex_code(6, 8, False, False, "protein")
+        self.assertEqual(len(latex_lines_prot), 10)
+        self.assertEqual(r'alma    \cC{C}\cDel{-}\cT{T}\cT{T}\cA{A}\cG{G}' , latex_lines_prot[1])
 
     def test_marks_row_nomarks(self):
         self.colorAligns.read_fasta_input(self.inputAlignPath1)

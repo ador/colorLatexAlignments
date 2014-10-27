@@ -1,6 +1,6 @@
 import math
 from fastareader import FastaReader
-from string import ascii_uppercase
+#from string import ascii_uppercase
 
 class ColorLatexAligns(object):
     """A class that reads an input multiple
@@ -22,22 +22,26 @@ class ColorLatexAligns(object):
     def read_color_map(self, path):
         with open(path, 'r') as f:
             for line in f.readlines():
-                (letter, rgbtext) = line.split(' ')
+                (char, rgbtext) = line.split(' ')
                 rgb = rgbtext.strip().lstrip('{').rstrip('}').split(',')
-                self.colormap[letter] = rgb
+                if (char == '-'):
+                    char = 'Del'
+                self.colormap[char] = rgb
             f.close()
         return self.colormap
 
     def get_latex_colordef(self, char):
+        if (char == '-'):
+            char = 'Del'
         if self.colormap[char] != None:
             (R, G, B) = self.colormap[char]
             cdef = "\definecolor{{color{letter}}}{{RGB}}{{{r},{g},{b}}}".format(letter=char, r=R, g=G, b=B)
             return cdef
 
-    def get_latex_colordefs_capitals(self):
+    def get_latex_colordefs(self):
         ret = list()
-        for letter in ascii_uppercase:
-            latex_part = self.get_latex_colordef(letter)
+        for char in self.colormap:
+            latex_part = self.get_latex_colordef(char)
             ret.append(latex_part)
         return ret
 
@@ -48,7 +52,7 @@ class ColorLatexAligns(object):
         ret.append(r'\usepackage{color}')
         ret.append(r'\usepackage{setspace}')
         ret.append(r'\usepackage{adjustbox}')
-        ret.extend(self.get_latex_colordefs_capitals())
+        ret.extend(sorted(self.get_latex_colordefs()))
         ret.append('\n')
         ret.append(r'\begin{document}')
         ret.append('\n')
@@ -56,14 +60,14 @@ class ColorLatexAligns(object):
 
     def get_latex_pre_verbatim(self):
         ret = list()
-        for letter in ascii_uppercase:
+        for letter in self.colormap:
             if letter == 'Q':
                 colorQ_newcommand = r'\newcommand{\cQ}[1]{\begingroup\raisebox{1.pt}{\adjustbox{scale={1}{0.867}}{\fboxsep=1.5pt\colorbox{colorQ}{#1}}}\endgroup}'
                 ret.append(colorQ_newcommand)
             else:
                 color_newcommand = r'\newcommand{\c' + letter + r'}[1]{\begingroup\fboxsep=1.5pt\colorbox{color' + letter + r'}{#1}\endgroup}'
                 ret.append(color_newcommand)
-        ret.append(r'\newcommand{\cDel}{\begingroup\fboxsep=1.5pt\colorbox{white}{-}\endgroup}')
+        ret = sorted(ret)
         ret.append(r'\begin{Verbatim}[frame=single,baselinestretch=0.48,commandchars=\\\{\},codes={\catcode`$=3\catcode`^=7\catcode`_=8}]')
         return ret
 
@@ -93,13 +97,17 @@ class ColorLatexAligns(object):
         rows_per_seq = self.howmany_rows_per_seq(seqwidth)
         return (seq_num + 2) * (rows_per_seq)
 
-    def color_letters(self, seq_part):
+    def color_letters(self, seq_part, atype="protein"):
         ret = ""
         for letter in seq_part:
             if letter == '-':
-                ret = ret + '\cDel'
+                ret = ret + '\cDel{-}'
             else:
-                one_colored_letter = r'\c' + letter + r'{' + letter + r'}'
+                one_colored_letter = ""
+                if (atype == "protein"):
+                    one_colored_letter = r'\c' + letter + r'{' + letter + r'}'
+                else:
+                    one_colored_letter = r'\c' + letter + r'd{' + letter + r'}'
                 ret = ret + one_colored_letter
         return ret
 
@@ -108,7 +116,7 @@ class ColorLatexAligns(object):
         # TODO
         return "* this feature is not implemented yet *"
 
-    def create_latex_code(self, seq_width, name_width, nocolor=False, withmarks=False):
+    def create_latex_code(self, seq_width, name_width, nocolor=False, withmarks=False, atype="protein"):
         if len(self.sequences) < 1:
             return list()
         # precomputing row number because we have to interleave results
@@ -131,7 +139,13 @@ class ColorLatexAligns(object):
                 if nocolor:
                     self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + seq_rows[row_idx]
                 else:
-                    self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + self.color_letters(seq_rows[row_idx])
+                    if (atype == "protein"):
+                        self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + self.color_letters(seq_rows[row_idx])
+                    elif (atype == "dna"):
+                        self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + self.color_letters(seq_rows[row_idx], atype="dna")
+                    else:
+                        print("ERROR: Unknown alignment type: " + str(atype) + " ! Valid options are: 'protein' or 'dna'")
+                        return None
         return self.outlines
 
 
