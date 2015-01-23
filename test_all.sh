@@ -4,8 +4,12 @@ baseDir=$(dirname "$0")
 thisAbsDir=$(readlink -f "$baseDir")
 export PYTHONPATH="$thisAbsDir:${PYTHONPATH:-}"
 
-python3 "$baseDir"/coloraligns/test_sequence.py
-python3 "$baseDir"/coloraligns/test_fastareader.py
-python3 "$baseDir"/coloraligns/test_coloraligns.py
+pushd "$baseDir" > /dev/null
 
-${baseDir}/test_latex.sh
+  python3 coloraligns/test_sequence.py
+  python3 coloraligns/test_fastareader.py
+  python3 coloraligns/test_coloraligns.py
+
+  ./test_latex.sh
+
+popd > /dev/null
