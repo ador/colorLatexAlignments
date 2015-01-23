@@ -10,9 +10,10 @@ How to install
 
 There is not much to install. But you will need some general tools: `pdflatex` and `python3`.
 
-On Ubuntu, it means you should have these packages installed: `python3 texlive-latex-base texlive-latex-extra`
+On Ubuntu, it means you should have these packages installed:<br />
+`python3 texlive-latex-base texlive-latex-extra`
 
-Run the tests in the top level directory within the git repository to check if everything is working:
+Run the tests in the top level directory within the git repository to check if everything is working:<br />
 `$ ./test_all.sh`
 
 
