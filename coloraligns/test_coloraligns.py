@@ -81,7 +81,7 @@ class TestColorLatexAligns(unittest.TestCase):
     def test_latex_preamble(self):
         colorMap = self.colorAligns.read_color_map(self.colorDefsPath)
         preamble_rows = self.colorAligns.get_latex_preamble()
-        self.assertEqual(r'\documentclass{article}', preamble_rows[0])
+        self.assertEqual(r'\documentclass', preamble_rows[0][0:14])
         self.assertEqual(r'\usepackage[utf8]{inputenc}', preamble_rows[1])
         self.assertEqual(r'\usepackage[english]{babel}', preamble_rows[2])
         self.assertEqual(r'\usepackage{fancyvrb}', preamble_rows[3])

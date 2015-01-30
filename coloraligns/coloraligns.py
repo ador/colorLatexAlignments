@@ -144,10 +144,8 @@ class ColorLatexAligns(object):
                 if nocolor:
                     self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + seq_rows[row_idx]
                 else:
-                    if (atype == "protein"):
-                        self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + self.color_letters(seq_rows[row_idx])
-                    elif (atype == "dna"):
-                        self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + self.color_letters(seq_rows[row_idx], atype="dna")
+                    if (atype == "dna" or atype == "protein"):
+                        self.outlines[out_idx] = self.fixwidth(seq_obj.name, name_width) + self.color_letters(seq_rows[row_idx], atype)
                     else:
                         print("ERROR: Unknown alignment type: " + str(atype) + " ! Valid options are: 'protein' or 'dna'")
                         return None
@@ -163,7 +161,6 @@ class ColorLatexAligns(object):
             # begin verbatim
             for line in self.get_latex_pre_verbatim():
                 f.write(line + "\n")
-            f.write("\n")
             # the alignment itself
             for line in self.outlines:
                 f.write(line + "\n")
