@@ -69,9 +69,11 @@ class ColorLatexAligns(object):
                 if size == "footnotesize":
                     colorQ_newcommand = r'\newcommand{\cQ}[1]{\begingroup\raisebox{0.8pt}{\adjustbox{scale={1}{0.88}}{\fboxsep=1.5pt\colorbox{colorQ}{#1}}}\endgroup}'
                 elif size == "small":
-                    pass
+                    colorQ_newcommand = r'\newcommand{\cQ}[1]{\begingroup\raisebox{0.9pt}{\adjustbox{scale={1}{0.876}}{\fboxsep=1.5pt\colorbox{colorQ}{#1}}}\endgroup}'
                 elif size == "large":
-                    pass
+                    colorQ_newcommand = r'\newcommand{\cQ}[1]{\begingroup\raisebox{1.23pt}{\adjustbox{scale={1}{0.855}}{\fboxsep=1.5pt\colorbox{colorQ}{#1}}}\endgroup}'
+                elif size == "Large":
+                    colorQ_newcommand = r'\newcommand{\cQ}[1]{\begingroup\raisebox{1.5pt}{\adjustbox{scale={1}{0.859}}{\fboxsep=1.5pt\colorbox{colorQ}{#1}}}\endgroup}'
                 ret.append(colorQ_newcommand)
             else:
                 color_newcommand = r'\newcommand{\c' + letter + r'}[1]{\begingroup\fboxsep=1.5pt\colorbox{color' + letter + r'}{#1}\endgroup}'
