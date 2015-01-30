@@ -60,11 +60,14 @@ class ColorLatexAligns(object):
         ret.append(r'\begin{document}')
         return ret
 
-    def get_latex_pre_verbatim(self):
+    def get_latex_pre_verbatim(self, small=False):
         ret = list()
         for letter in self.colormap:
             if letter == 'Q':
-                colorQ_newcommand = r'\newcommand{\cQ}[1]{\begingroup\raisebox{1.pt}{\adjustbox{scale={1}{0.867}}{\fboxsep=1.5pt\colorbox{colorQ}{#1}}}\endgroup}'
+                if small:
+                    colorQ_newcommand = r'\newcommand{\cQ}[1]{\begingroup\raisebox{0.8pt}{\adjustbox{scale={1}{0.88}}{\fboxsep=1.5pt\colorbox{colorQ}{#1}}}\endgroup}'
+                else:
+                    colorQ_newcommand = r'\newcommand{\cQ}[1]{\begingroup\raisebox{1.pt}{\adjustbox{scale={1}{0.867}}{\fboxsep=1.5pt\colorbox{colorQ}{#1}}}\endgroup}'
                 ret.append(colorQ_newcommand)
             else:
                 color_newcommand = r'\newcommand{\c' + letter + r'}[1]{\begingroup\fboxsep=1.5pt\colorbox{color' + letter + r'}{#1}\endgroup}'
@@ -73,10 +76,13 @@ class ColorLatexAligns(object):
         ret.append(r'\begin{Verbatim}[frame=single,baselinestretch=0.48,commandchars=\\\{\},codes={\catcode`$=3\catcode`^=7\catcode`_=8}]')
         return ret
 
-    def get_latex_post_verbatim(self):
+    def get_latex_post_verbatim(self, small=False):
         ret = list()
         ret.append(r'\end{Verbatim}')
         ret.append('\n')
+        if small:
+            ret.append(r'\normalsize')
+            ret.append("\n")
         ret.append(r'\end{document}')
         ret.append('\n')
         return ret
@@ -152,20 +158,23 @@ class ColorLatexAligns(object):
         return self.outlines
 
 
-    def write_output(self, outpath):
+    def write_output(self, outpath, small=False):
         with open(outpath, 'w') as f:
             # preamble, begin document
             for line in self.get_latex_preamble():
                 f.write(line + "\n")
             f.write("\n")
+            if small:
+              f.write(r'\footnotesize')
+              f.write("\n")
             # begin verbatim
-            for line in self.get_latex_pre_verbatim():
+            for line in self.get_latex_pre_verbatim(small):
                 f.write(line + "\n")
             # the alignment itself
             for line in self.outlines:
                 f.write(line + "\n")
             # end verbatim and document
-            for line in self.get_latex_post_verbatim():
+            for line in self.get_latex_post_verbatim(small):
                 f.write(line + "\n")
             f.close()
 

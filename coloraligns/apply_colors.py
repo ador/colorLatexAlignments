@@ -6,9 +6,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-i', help='input file in fasta format')
 parser.add_argument('-o', help='output tex file')
 parser.add_argument('-c', help='color definition file')
-parser.add_argument('-l', help='maximum width of the sequence part in characters')
-parser.add_argument('-n', help='width of the name column in characters')
+parser.add_argument('-l', help='maximum width (number of characters within a line - with gaps included) of the aligned sequence part')
+parser.add_argument('-n', help='maximum number of characters for sequence names (names will be truncated if too long)')
 parser.add_argument('-t', help='alignment type: "protein" (default) or "dna"')
+parser.add_argument('--small', dest='small', default=False, help='use smaller characters (footnotesize)')
+
 args = parser.parse_args()
 
 
@@ -19,7 +21,7 @@ if args.t == None:
     colorAligns.create_latex_code(int(args.l), int(args.n), False, False)
 else:
     colorAligns.create_latex_code(int(args.l), int(args.n), False, False, args.t)
-colorAligns.write_output(args.o)
-# todo
+colorAligns.write_output(args.o, args.small)
+
 
 
