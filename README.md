@@ -19,6 +19,7 @@ Run the tests in the top level directory within the git repository to check if e
 
 How to use
 ----------
-W.I.P.
+See the example script: `example1.sh`
+
 
 

@@ -47,6 +47,9 @@ class ColorLatexAligns(object):
 
     def get_latex_preamble(self):
         ret = list()
+        ret.append(r'\documentclass{article}')
+        ret.append(r'\usepackage[utf8]{inputenc}')
+        ret.append(r'\usepackage[english]{babel}')
         ret.append(r'\usepackage{fancyvrb}')
         ret.append(r'\usepackage[usenames, dvipsnames]{color}')
         ret.append(r'\usepackage{color}')
@@ -55,7 +58,6 @@ class ColorLatexAligns(object):
         ret.extend(sorted(self.get_latex_colordefs()))
         ret.append('\n')
         ret.append(r'\begin{document}')
-        ret.append('\n')
         return ret
 
     def get_latex_pre_verbatim(self):
@@ -74,6 +76,9 @@ class ColorLatexAligns(object):
     def get_latex_post_verbatim(self):
         ret = list()
         ret.append(r'\end{Verbatim}')
+        ret.append('\n')
+        ret.append(r'\end{document}')
+        ret.append('\n')
         return ret
 
     def fixwidth(self, name, width):
@@ -95,7 +100,7 @@ class ColorLatexAligns(object):
     def howmany_rows_total(self, seqwidth):
         seq_num = len(self.sequences)
         rows_per_seq = self.howmany_rows_per_seq(seqwidth)
-        return (seq_num + 2) * (rows_per_seq)
+        return int((seq_num + 2) * (rows_per_seq))
 
     def color_letters(self, seq_part, atype="protein"):
         ret = ""
@@ -151,7 +156,7 @@ class ColorLatexAligns(object):
 
     def write_output(self, outpath):
         with open(outpath, 'w') as f:
-            # preamble
+            # preamble, begin document
             for line in self.get_latex_preamble():
                 f.write(line + "\n")
             f.write("\n")
@@ -159,10 +164,10 @@ class ColorLatexAligns(object):
             for line in self.get_latex_pre_verbatim():
                 f.write(line + "\n")
             f.write("\n")
-            # the alignmnet
+            # the alignment itself
             for line in self.outlines:
                 f.write(line + "\n")
-            # end verbatim
+            # end verbatim and document
             for line in self.get_latex_post_verbatim():
                 f.write(line + "\n")
             f.close()
