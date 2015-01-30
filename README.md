@@ -19,7 +19,7 @@ Run the tests in the top level directory within the git repository to check if e
 
 How to use
 ----------
-See the example scripts: `example1.sh` and `example2.sh`.
+See the example scripts: `example1.sh` and `example2.sh` and `example3.sh`.
 
 Or print the help menu:<br />
 `$ python3 coloraligns/apply_colors.py --help`
