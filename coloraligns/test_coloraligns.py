@@ -95,13 +95,13 @@ class TestColorLatexAligns(unittest.TestCase):
 
     def test_latex_pre_verbatim(self):
         colorMap = self.colorAligns.read_color_map(self.colorDefsPath)
-        pre_rows = self.colorAligns.get_latex_pre_verbatim()
-        self.assertEqual(28, len(pre_rows))
+        pre_rows = self.colorAligns.get_latex_pre_verbatim("large")
+        self.assertEqual(29, len(pre_rows))
         self.assertEqual(r'\newcommand{\cA}[1]{\begingroup\fboxsep=1.5pt\colorbox{colorA}{#1}\endgroup}', pre_rows[0])
         self.assertEqual(r'\newcommand{\cB}[1]{\begingroup\fboxsep=1.5pt\colorbox{colorB}{#1}\endgroup}', pre_rows[1])
         self.assertEqual(r'\newcommand{\cDel}[1]{\begingroup\fboxsep=1.5pt\colorbox{colorDel}{#1}\endgroup}', pre_rows[3])
         self.assertEqual(r'\newcommand{\cZ}[1]{\begingroup\fboxsep=1.5pt\colorbox{colorZ}{#1}\endgroup}', pre_rows[26])
-        self.assertEqual(r'\begin{Verbatim}[frame=single,baselinestretch=0.48,commandchars=\\\{\},codes={\catcode`$=3\catcode`^=7\catcode`_=8}]', pre_rows[27])
+        self.assertEqual(r'\begin{Verbatim}[frame=single,baselinestretch=0.48,commandchars=\\\{\},codes={\catcode`$=3\catcode`^=7\catcode`_=8}]', pre_rows[28])
 
     def test_latex_post_verbatim(self):
         post_rows = self.colorAligns.get_latex_post_verbatim()
